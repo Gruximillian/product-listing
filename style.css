@@ -1,0 +1,325 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  font-family: arial, sans-serif;
+  background-color: #eee;
+}
+
+.wrapper {
+  width: 90%;
+  margin: auto;
+  max-width: 1000px;
+  min-width: 580px;
+}
+
+.home-link {
+  text-align: center;
+}
+
+.home-link a {
+  text-transform: uppercase;
+  text-decoration: none;
+  color: maroon;
+  padding: 5px 10px;
+}
+
+.home-link a:hover {
+  text-decoration: underline;
+}
+
+header {
+  border-bottom: 2px dashed #ddd;
+}
+
+header .title {
+  margin: 10px;
+  font-size: 5em;
+  text-align: center;
+  font-family: Courgette, cursive;
+}
+
+.main-content {
+  border-bottom: 2px solid #ddd;
+}
+
+.main-content > section {
+  border: 1px solid #999;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+.product-list {
+  background-color: #fff;
+  padding: 30px 0;
+  margin-bottom: 50px;
+}
+
+ul {
+  list-style: none;
+}
+
+.product-list .products {
+  padding: 0 60px;
+}
+
+.shopping-cart .products {
+  padding: 0;
+}
+
+
+.products li {
+  float: left;
+  width: 200px;
+  margin: 1%;
+  border: 1px solid #555;
+  background-color: #eee;
+  position: relative;
+}
+
+.products h3 {
+  margin: 10px 0;
+  padding: 0 15px;
+}
+
+.product-image {
+  position: relative;
+  width: 75%;
+  margin: auto;
+}
+
+.product-image img {
+  width: 100%;
+}
+
+.product-description {
+  padding: 0 10px;
+  margin: 15px 0 5px;
+  height: 60px;
+  font-size: 0.8em;
+  color: #444;
+  overflow: hidden;
+}
+
+.products::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.button {
+  display: inline-block;
+  padding: 0 10px;
+  border: 1px solid #555;
+  height: 30px;
+  line-height: 30px;
+  box-shadow: 1px 1px 2px 0 #000;
+  color: #fff;
+}
+
+.button-add,
+.button-checkout,
+.button-continue {
+  background-color: #5cb85c;
+}
+
+.button-remove {
+  background-color: #bc585c;
+}
+
+.button-promo {
+  background-color: #337ab7;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.button:active {
+  box-shadow: 1px 1px 1px 0 #000 inset;
+  padding-left: 12px;
+  padding-top: 1px;
+}
+
+.button:active span {
+  padding-left: 1px;
+}
+
+.button-add:hover,
+.button-checkout:hover,
+.button-continue:hover {
+  background-color: #5cd85c;
+}
+
+.button-promo:hover {
+  background-color: #438ac7;
+}
+
+.button-remove:hover {
+  background-color: #dc585c;
+}
+
+.button-checkout {
+  font-weight: bold;
+}
+
+.price-overlay {
+  margin-top: 10px;
+  padding: 10px 15px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.price-overlay .price {
+  line-height: 30px;
+}
+
+.price-overlay .add-to-cart,
+.price-overlay .remove-from-cart {
+  position: absolute;
+  line-height: 30px;
+  left: 10px;
+  color: transparent;
+  transition: color 0.8s;
+}
+
+.button-add,
+.button-remove {
+  width: 50px;
+  overflow: hidden;
+  position: absolute;
+  right: 15px;
+  transition: width 0.2s;
+}
+
+.button-add:hover {
+  width: 170px;
+}
+
+.button-remove:hover {
+  width: 120px;
+}
+
+.button-add:hover .add-to-cart,
+.button-remove:hover .remove-from-cart {
+  color: #fff;
+}
+
+.button .cart {
+  width: 30px;
+  vertical-align: middle;
+  position: absolute;
+  right: 8px;
+}
+
+.button:active .cart {
+  right: 7px;
+}
+
+.shopping-cart {
+  background-color: #fff;
+  padding: 10px 50px 30px;
+}
+
+.shopping-cart h1,
+.shopping-cart h2 {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #999;
+}
+
+#total-price {
+  float: right;
+  font-size: 2em;
+}
+
+#total-price p {
+  margin: 0;
+}
+
+#total-price span {
+  font-weight: bold;
+}
+
+.promo {
+  float: left;
+  margin-top: 18px;
+}
+
+.promo label {
+  padding-bottom: 15px;
+}
+
+.promo input {
+  height: 40px;
+  padding-left: 10px;
+  margin-top: 10px;
+  border-radius: 3px;
+  border: 1px solid #999;
+  width: 200px;
+  float: left;
+}
+
+.button-promo {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.button-checkout {
+  float: right;
+}
+
+.shopping-controls {
+  float: right;
+  clear: right;
+}
+
+.shopping-controls div {
+  margin: 9px 5px;
+}
+
+.cart-details .button {
+  width: 150px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+
+.cart-details::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.shopping-cart .product-description {
+  display: none; /* Temporary, until I decide if I will keep or remove this content */
+}
+
+.shopping-cart li {
+  width: 150px;
+}
+
+.quantity {
+  text-align: center;
+  padding-top: 10px;
+}
+
+#qty {
+  display: inline-block;
+  width: 40px;
+  height: 25px;
+  border-radius: 3px;
+  border: 1px solid #999;
+  text-align: center;
+}
+
+footer p {
+  color: #ccc;
+  text-align: center;
+  margin: 50px 0;
+}
