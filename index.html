@@ -6,15 +6,15 @@
   <link href='https://fonts.googleapis.com/css?family=Courgette' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body>
+<body class="body">
   <div class="wrapper">
 
-    <header>
-      <p class="title">sljivovica.com</p>
+    <header class="header">
+      <p class="title text-center">sljivovica.com</p>
     </header>
 
     <section class="main-content">
-      <h1>Have a taste of our awesome schnapps</h1>
+      <p class="call-to-action text-center">Have a taste of our awesome schnapps</p>
 
       <section class="product-list">
         <ul class="products">
@@ -246,22 +246,72 @@
       </section>
 
       <section class="shopping-cart">
+
         <h1>Shopping cart</h1>
+
         <section class="cart-details">
           <div class="promo">
-            <label for="promo-code">Have a promo code? Enter it here:</label><br>
+            <label for="promo-code">You have a promo code? Enter it here:</label><br>
             <input type="text" name="promo-code" id="promo-code" placeholder="code">
             <div class="button button-promo">Submit code</div>
           </div>
-          <div id="total-price">
-            <p>Total: <span>$842.56</span></p>
-          </div>
-          <div class="shopping-controls">
-            <div class="button button-continue">Keep Shopping</div>
-            <div class="button button-checkout">Checkout</div>
+          <ul class="promo-code-list">
+            <li><span class="code">Code 1</span>: <span class="code-description">10% off</span></li>
+            <li><span class="code">Code 2</span>: <span class="code-description">5% off total</span></li>
+            <li><span class="code">Code 3</span>: <span class="code-description">15% off special</span></li>
+          </ul>
+
+          <hr>
+
+          <div class="checkout-details">
+            <p>You selected to buy the following products:</p>
+
+            <ul id="selected-products-list" class="selected-products-list">
+              <li>Product 1 - <span class="price">$151</span>, qty: <span class="quantity">3</span></li>
+              <li>Product 2 - <span class="price">$51</span>, qty: <span class="quantity">5</span></li>
+              <li>Product 6 - <span class="price">$108</span>, qty: <span class="quantity">2</span></li>
+            </ul>
+
+            <table id="selected-products-table" class="selected-products-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Product 1</td>
+                  <td>$151</td>
+                  <td class="quantity">3</td>
+                  <td>$453</td>
+                </tr>
+                <tr>
+                  <td>Product 2</td>
+                  <td>$51</td>
+                  <td class="quantity">5</td>
+                  <td>$255</td>
+                </tr>
+                <tr>
+                  <td>Product 6</td>
+                  <td>$108</td>
+                  <td class="quantity">2</td>
+                  <td>$216</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p id="total-price">Total: <span>$842.56</span></p>
+            <div class="shopping-controls">
+              <div class="button button-checkout">Checkout</div>
+              <div class="button button-continue">Keep Shopping</div>
+            </div>
           </div>
         </section>
         <h2>Your item list</h2>
+
         <ul class="products">
           <li>
             <h3>Schnappsy</h3>
@@ -336,10 +386,11 @@
             </div>
           </li>
         </ul>
+
       </section>
     </section>
 
-    <footer>
+    <footer class="footer">
       <p>&copy; sljivovica.com - 2016</p>
     </footer>
 
