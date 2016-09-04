@@ -2,6 +2,12 @@
   box-sizing: border-box;
 }
 
+.clear::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
 html {
   font-size: 62.5%;
 }
@@ -29,6 +35,12 @@ html {
 
 }
 
+/* Initially hidden elements */
+
+.hide {
+  display: none;
+}
+
 .wrapper {
   width: 90%;
   margin: auto;
@@ -40,7 +52,15 @@ html {
 }
 
 .header {
-  border-bottom: 2px dashed #ddd;
+  box-shadow: 0 6px 6px -6px #000;
+  background-color: rgba(238, 238, 238, 0.95);
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5000;
+  width: 90%;
+  max-width: 1100px;
 }
 
 .header .title {
@@ -50,8 +70,27 @@ html {
   font-family: Courgette, cursive;
 }
 
+.shopping-cart-toggle {
+  height: 40px;
+  float: right;
+  cursor: pointer;
+}
+
+.shopping-cart-toggle > img,
+.shopping-cart-toggle > div {
+  float: right;
+  height: 100%;
+}
+
+.header .cart-summary {
+  font-size: 1.6rem;
+  padding-top: 5px;
+  margin-right: 20px;
+}
+
 .main-content {
   border-bottom: 2px solid #ddd;
+  margin-top: 150px;
 }
 
 .call-to-action {
@@ -230,8 +269,8 @@ ul {
   line-height: 30px;
 }
 
-.price-overlay .add-to-cart,
-.price-overlay .remove-from-cart {
+.add-to-cart,
+.remove-from-cart {
   position: absolute;
   line-height: 30px;
   left: 10px;
@@ -245,6 +284,7 @@ ul {
   overflow: hidden;
   position: absolute;
   right: 15px;
+  bottom: 10px;
   transition: width 0.2s ease-in-out;
 }
 
@@ -275,11 +315,21 @@ ul {
   margin-bottom: 50px;
 }
 
+.hide-cart-toggle {
+  font-size: 1.2rem;
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  cursor: pointer;
+  color: maroon;
+}
+
 .shopping-cart h1,
 .shopping-cart h2 {
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 2px solid #999;
+  position: relative;
 }
 
 hr {
@@ -291,14 +341,6 @@ hr {
 .cart-details > div {
   width: 100%;
   float: left;
-}
-
-@media (min-width: 750px) {
-
-  .cart-details > div {
-    /*width: 50%;*/
-  }
-
 }
 
 .cart-details .button {
@@ -402,7 +444,10 @@ hr {
   font-size: 1.6rem;
   width: 100%;
   border-collapse: collapse;
-  display: none;
+}
+
+.selected-products-table tbody tr:nth-child(2n+1) {
+  background-color: #ccc;
 }
 
 @media (min-width: 550px) {
@@ -478,7 +523,7 @@ hr {
   padding-top: 10px;
 }
 
-#qty {
+.qty {
   display: inline-block;
   width: 40px;
   height: 25px;
@@ -491,4 +536,14 @@ hr {
   color: #ccc;
   text-align: center;
   margin: 50px 0;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  background-color: rgba(238, 238, 238, 0.7);
+  padding: 2px;
+  border-radius: 2px;
+  cursor: pointer;
 }

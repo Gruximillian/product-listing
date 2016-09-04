@@ -5,11 +5,21 @@
   <title>Product Listing</title>
   <link href='https://fonts.googleapis.com/css?family=Courgette' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script type="text/javascript" src="script.js"></script>
 </head>
 <body class="body">
   <div class="wrapper">
 
     <header class="header">
+      <div class="clear">
+        <div class="shopping-cart-toggle" title="Show Shopping Cart">
+          <img class="cart" src="cart.png" alt="Cart toggle">
+          <div class="cart-summary">
+            <span class="cart-item-no">0</span> items<br>
+            <span class="cart-total">0</span> total
+          </div>
+        </div>
+      </div>
       <p class="title text-center">sljivovica.com</p>
     </header>
 
@@ -18,236 +28,68 @@
 
       <section class="product-list">
         <ul class="products">
-          <li>
-            <h3>Schnappsy</h3>
+          <li id="item-0000" class="product">
+            <h3 class="item-name">Schnappsy</h3>
             <div class="product-image">
               <img src="placeholder.png">
             </div>
             <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
             <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
+              $<span class="price">253.86</span>
             </div>
+            <span class="button button-add">
+              <span class="add-to-cart">Add to cart</span>
+              <img class="cart" src="cart.png" alt="Add to cart">
+            </span>
           </li>
-          <li>
-            <h3>Schnappsy</h3>
+          <li id="item-0001" class="product">
+            <h3 class="item-name">Schnappsy</h3>
             <div class="product-image">
               <img src="placeholder.png">
             </div>
             <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world! If you find something like this on other places, know that you are tricked!</p>
             <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
+              $<span class="price">253.86</span>
             </div>
+            <span class="button button-add">
+              <span class="add-to-cart">Add to cart</span>
+              <img class="cart" src="cart.png" alt="Add to cart">
+            </span>
           </li>
-          <li>
-            <h3>Schnappsy</h3>
+          <li id="item-0002" class="product">
+            <h3 class="item-name">Schnappsy</h3>
             <div class="product-image">
               <img src="placeholder.png">
             </div>
             <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
             <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
+              $<span class="price">253.86</span>
             </div>
+            <span class="button button-add">
+              <span class="add-to-cart">Add to cart</span>
+              <img class="cart" src="cart.png" alt="Add to cart">
+            </span>
           </li>
-          <li>
-            <h3>Schnappsy</h3>
+          <li id="item-0003" class="product">
+            <h3 class="item-name">Schnappsy</h3>
             <div class="product-image">
               <img src="placeholder.png">
             </div>
             <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
             <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
+              $<span class="price">253.86</span>
             </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-add">
-                <span class="add-to-cart">Add to cart</span>
-                <img class="cart" src="cart.png" alt="Add to cart">
-              </span>
-            </div>
+            <span class="button button-add">
+              <span class="add-to-cart">Add to cart</span>
+              <img class="cart" src="cart.png" alt="Add to cart">
+            </span>
           </li>
         </ul>
       </section>
 
-      <section class="shopping-cart">
+      <section class="shopping-cart hide">
 
-        <h1>Shopping cart</h1>
+        <h1>Shopping cart <span class="hide-cart-toggle">Hide Cart</span></h1>
 
         <section class="cart-details">
           <div class="promo">
@@ -266,13 +108,11 @@
           <div class="checkout-details">
             <p>You selected to buy the following products:</p>
 
-            <ul id="selected-products-list" class="selected-products-list">
-              <li>Product 1 - <span class="price">$151</span>, qty: <span class="quantity">3</span></li>
-              <li>Product 2 - <span class="price">$51</span>, qty: <span class="quantity">5</span></li>
-              <li>Product 6 - <span class="price">$108</span>, qty: <span class="quantity">2</span></li>
+            <ul id="selected-products-list" class="selected-products selected-products-list">
+              <!-- <li><span class="product-name">Product 1</span> - $<span class="price">151</span>, qty: <span class="quantity">3</span></li> -->
             </ul>
 
-            <table id="selected-products-table" class="selected-products-table">
+            <table id="selected-products-table" class="selected-products selected-products-table hide">
               <thead>
                 <tr>
                   <th>Product Name</th>
@@ -282,24 +122,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Product 1</td>
-                  <td>$151</td>
+                <!-- <tr>
+                  <td class="product-name">Product 1</td>
+                  <td>$<span class="price">151</span></td>
                   <td class="quantity">3</td>
-                  <td>$453</td>
-                </tr>
-                <tr>
-                  <td>Product 2</td>
-                  <td>$51</td>
-                  <td class="quantity">5</td>
-                  <td>$255</td>
-                </tr>
-                <tr>
-                  <td>Product 6</td>
-                  <td>$108</td>
-                  <td class="quantity">2</td>
-                  <td>$216</td>
-                </tr>
+                  <td>$<span class="subtotal">453</span></td>
+                </tr> -->
               </tbody>
             </table>
 
@@ -310,81 +138,10 @@
             </div>
           </div>
         </section>
-        <h2>Your item list</h2>
+        <h2>Your items</h2>
 
         <ul class="products">
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="quantity">
-              <label for="qty">Quantity: </label>
-              <input type="text" name="qty" id="qty" value="1" maxlength="2">
-            </div>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-remove">
-                <span class="remove-from-cart">Remove</span>
-                <img class="cart" src="cart.png" alt="Remove from cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world! If you find something like this on other places, know that you are tricked!</p>
-            <div class="quantity">
-              <label for="qty">Quantity: </label>
-              <input type="text" name="qty" id="qty" value="1" maxlength="2">
-            </div>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-remove">
-                <span class="remove-from-cart">Remove</span>
-                <img class="cart" src="cart.png" alt="Remove from cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="quantity">
-              <label for="qty">Quantity: </label>
-              <input type="text" name="qty" id="qty" value="1" maxlength="2">
-            </div>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-remove">
-                <span class="remove-from-cart">Remove</span>
-                <img class="cart" src="cart.png" alt="Remove from cart">
-              </span>
-            </div>
-          </li>
-          <li>
-            <h3>Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="quantity">
-              <label for="qty">Quantity: </label>
-              <input type="text" name="qty" id="qty" value="1" maxlength="2">
-            </div>
-            <div class="price-overlay">
-              <span class="price">$253.86</span>
-              <span class="button button-remove">
-                <span class="remove-from-cart">Remove</span>
-                <img class="cart" src="cart.png" alt="Remove from cart">
-              </span>
-            </div>
-          </li>
+          <!-- dynamically added -->
         </ul>
 
       </section>
@@ -395,5 +152,6 @@
     </footer>
 
   </div> <!-- end ".wrapper" -->
+  <a href="#"><span class="back-to-top" title="Back to top">Top</span></a>
 </body>
 </html>
