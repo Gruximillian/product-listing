@@ -26,7 +26,8 @@ function initShoppingCart() {
       cartMainToggle        = document.querySelector('.shopping-cart-toggle'),
       cartHideToggle        = document.querySelector('.hide-cart-toggle'),
       productList           = document.querySelector('.product-list .products'),
-      shoppingCartProducts  = document.querySelector('.shopping-cart .products');
+      shoppingCartProducts  = document.querySelector('.shopping-cart .products'),
+      selectedProductsTable = document.querySelector('#selected-products-table');
 
   // template for products shown in the main product list
   var productTemplateArrayList = ['\t<h3 class="item-name">{{productName}}</h3>\n',
@@ -60,16 +61,37 @@ function initShoppingCart() {
                               '\t\t<img class="cart" src="cart.png" alt="Remove from cart">\n',
                               '\t</span>'];
 
-  // object that will store the data for every product
+  var productTableTemplate = ['<td class="item-name">{{productName}}</td>',
+                              '<td>$<span class="price">{{productPrice}}</span></td>',
+                              '<td class="quantity">{{productQuantity}}</td>',
+                              '<td>$<span class="subtotal">{{productSubtotal}}</span></td>'];
+
+  // objects that will store the data for every product in product list and the product cart
   var productsObject = {};
+  var shoppingCartObject = {};
 
   // the function that constructs the product data object
   function ProductConstructor(productDataObject) {
-    this.productID = productDataObject.productID;
-    this.productName = productDataObject.productName;
-    this.productImageUrl = productDataObject.productImageUrl;
+    this.productID          = productDataObject.productID;
+    this.productName        = productDataObject.productName;
+    this.productImageUrl    = productDataObject.productImageUrl;
     this.productDescription = productDataObject.productDescription;
-    this.productPrice = productDataObject.productPrice;
+    this.productPrice       = productDataObject.productPrice;
+    this.productQuantity    = productDataObject.productQuantity || 0;
+    this.productSubtotal    = productDataObject.productSubtotal || 0;
+  }
+
+  // add the method for manipulating the price, quantity and subtotal of the product
+  // it is needed for applying the promo codes
+  ProductConstructor.prototype.updatePrice = function(promoCode) {
+    var initialPrice = this.productPrice;
+    this.productPrice = (initialPrice * promoCode).toFixed(2);
+  }
+  ProductConstructor.prototype.updateQuantity = function(qty) {
+    this.productQuantity = qty;
+  }
+  ProductConstructor.prototype.updateSubtotal = function() {
+    this.productSubtotal = this.productPrice * this.productQuantity;
   }
 
   // generating 4 items
@@ -82,17 +104,10 @@ function initShoppingCart() {
       productDescription: 'Taste the best schnapps in the world. Once you try it, you won\'t stop... it will change the way you see the world!',
       productPrice: (Math.random() * 200).toFixed(2) // this will be just plain number, I do this just to automate the process
     });
+    // productsObject['item-' + i].updateSubtotal();
   }
 
   // console.log(JSON.stringify(productsObject, null, 2));
-
-  // add the method for manipulating the price of the product
-  // it is needed for applying the promo codes
-  ProductConstructor.prototype.updatePrice = function(promoCode) {
-    var initialPrice = this.productPrice;
-
-    this.productPrice = (initialPrice * promoCode).toFixed(2);
-  }
 
   // creates and adds item to the 'location' node
   // 'itemData' is the item data from the 'productsObject'
@@ -101,7 +116,7 @@ function initShoppingCart() {
     var newItemAddButton,
         removeItemButton,
         itemQuantity,
-        newItem         = document.createElement('li'),
+        newItem         = document.createElement('li'), // THIS IS MAYBE BETTER TO DO IN SOME OTHER PLACE
         isShoppingCart  = location.classList.contains('products-shopping-cart'),
         itemHTML        = itemTemplate.join('')
                                       .replace('{{productName}}', itemData.productName)
@@ -113,7 +128,7 @@ function initShoppingCart() {
     newItem.innerHTML = itemHTML;
     location.appendChild(newItem);
 
-    // if the item is added to the shopping cart
+    // if the item is being added to the shopping cart
     // change its id, and add event listeners on 'remove' button
     if ( isShoppingCart ) {
 
@@ -129,26 +144,46 @@ function initShoppingCart() {
       removeItemButton.addEventListener('click', removeItemFromCart);
 
     } else {
-      // if the item is added to the product list, set its id
+      // if the item is being added to the product list, set its id
       newItem.id = itemData.productID;
 
       newItemAddButton = newItem.querySelector('.button-add');
 
       // set the event listener on the 'Add to Cart' button
       newItemAddButton.addEventListener('click', function() {
-        var itemID       = this.parentElement.id,
-            itemCartID   = 'cart-' + itemID,
-            itemInCart   = document.querySelector('#' + itemCartID);
+        var itemID      = this.parentElement.id,
+            itemCartID  = 'cart-' + itemID,
+            itemTableID = 'product-table-' + itemID,
+            itemInCart  = document.querySelector('#' + itemCartID),
+            itemRow;
 
         itemQuantity = (itemInCart) ? itemInCart.querySelector('.qty') : '';
 
         // if the item is already in the cart, just update its quantity
         if ( itemQuantity ) {
-          var quantity = +itemQuantity.value;
+          var quantity = +itemQuantity.value + 1;
+          itemQuantity.value = quantity;
 
-          itemQuantity.value = quantity + 1;
+          itemData.updateQuantity(quantity);
+          itemData.updateSubtotal();
+
+          updateCart(itemID);
+
           return;
         }
+
+        itemData.updateQuantity(1);
+        itemData.updateSubtotal();
+        itemRow = document.createElement('tr');
+        itemRow.id = itemTableID;
+        itemRow.innerHTML = productTableTemplate.join('')
+                                                .replace('{{productName}}', itemData.productName)
+                                                .replace('{{productPrice}}', itemData.productPrice)
+                                                .replace('{{productQuantity}}', itemData.productQuantity)
+                                                .replace('{{productSubtotal}}', itemData.productSubtotal);
+
+        selectedProductsTable.appendChild(itemRow);
+        updateCart(itemData.productID); // MAYBE NOT NEEDED
 
         // if this is the first item added to the cart, show the cart if it is hidden
         if ( shoppingCartProducts.querySelectorAll('li').length === 0 ) {
@@ -161,6 +196,19 @@ function initShoppingCart() {
       });
 
     }
+
+  }
+
+  function updateCart(itemID) {
+    // updates the total and subtotal rows
+    // updates cart icon on top of the page
+    console.log(itemID);
+    var itemRow = document.querySelector('#product-table-' + itemID),
+        itemRowQty = itemRow.querySelector('.quantity'),
+        itemRowSubtotal = itemRow.querySelector('.subtotal');
+
+    itemRowQty.textContent = productsObject[itemID].productQuantity;
+    itemRowSubtotal.textContent = productsObject[itemID].productSubtotal;
 
   }
 
