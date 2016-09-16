@@ -16,7 +16,7 @@
           <img class="cart" src="cart.png" alt="Cart toggle">
           <div class="cart-summary">
             <span class="cart-item-no">0</span> items<br>
-            <span class="cart-total">0</span> total
+            $<span class="cart-total">0</span> total
           </div>
         </div>
       </div>
@@ -28,62 +28,7 @@
 
       <section class="product-list">
         <ul class="products">
-          <!-- <li id="item-0000" class="product">
-            <h3 class="item-name">Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              $<span class="price">253.86</span>
-            </div>
-            <span class="button button-add">
-              <span class="add-to-cart">Add to cart</span>
-              <img class="cart" src="cart.png" alt="Add to cart">
-            </span>
-          </li>
-          <li id="item-0001" class="product">
-            <h3 class="item-name">Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world! If you find something like this on other places, know that you are tricked!</p>
-            <div class="price-overlay">
-              $<span class="price">253.86</span>
-            </div>
-            <span class="button button-add">
-              <span class="add-to-cart">Add to cart</span>
-              <img class="cart" src="cart.png" alt="Add to cart">
-            </span>
-          </li>
-          <li id="item-0002" class="product">
-            <h3 class="item-name">Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              $<span class="price">253.86</span>
-            </div>
-            <span class="button button-add">
-              <span class="add-to-cart">Add to cart</span>
-              <img class="cart" src="cart.png" alt="Add to cart">
-            </span>
-          </li>
-          <li id="item-0003" class="product">
-            <h3 class="item-name">Schnappsy</h3>
-            <div class="product-image">
-              <img src="placeholder.png">
-            </div>
-            <p class="product-description">Taste the best schnapps in the world. Once you try it, you won't stop... it will change the way you see the world!</p>
-            <div class="price-overlay">
-              $<span class="price">253.86</span>
-            </div>
-            <span class="button button-add">
-              <span class="add-to-cart">Add to cart</span>
-              <img class="cart" src="cart.png" alt="Add to cart">
-            </span>
-          </li> -->
+          <!-- dynamically added content -->
         </ul>
       </section>
 
@@ -106,32 +51,30 @@
           <hr>
 
           <div class="checkout-details">
-            <p>You selected to buy the following products:</p>
 
-            <ul id="selected-products-list" class="selected-products selected-products-list">
-              <!-- <li><span class="product-name">Product 1</span> - $<span class="price">151</span>, qty: <span class="quantity">3</span></li> -->
-            </ul>
+            <div class="selected-products-table-list">
+              <p>You selected to buy the following products:</p>
 
-            <table class="selected-products selected-products-table hide">
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody id="selected-products-table">
-                <!-- <tr>
-                  <td class="product-name">Product 1</td>
-                  <td>$<span class="price">151</span></td>
-                  <td class="quantity">3</td>
-                  <td>$<span class="subtotal">453</span></td>
-                </tr> -->
-              </tbody>
-            </table>
+              <ul id="selected-products-list" class="selected-products selected-products-list">
+                <!-- dynamically added content -->
+              </ul>
 
-            <p id="total-price">Total: <span>$842.56</span></p>
+              <table class="selected-products selected-products-table hide">
+                <thead>
+                  <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody id="selected-products-table">
+                  <!-- dynamically added content -->
+                </tbody>
+              </table>
+            </div>
+
+            <p id="total-price"">Total: $<span class="cart-total">0</span></p>
             <div class="shopping-controls">
               <div class="button button-checkout">Checkout</div>
               <div class="button button-continue">Keep Shopping</div>
