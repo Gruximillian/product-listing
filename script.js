@@ -120,7 +120,7 @@ function initShoppingCart() {
   // it is needed for applying the promo codes
   ProductConstructor.prototype.updatePrice = function(promoCode) {
     var initialPrice = this.productPrice;
-    this.productPrice = (initialPrice * promoCode).toFixed(2);
+    this.productPrice = Math.round((initialPrice * promoCode));
   }
   ProductConstructor.prototype.updateQuantity = function(qty) {
     this.productQuantity = qty;
@@ -137,9 +137,8 @@ function initShoppingCart() {
       productName: 'Schnappsy',
       productImageUrl: 'placeholder.png',
       productDescription: 'Taste the best schnapps in the world. Once you try it, you won\'t stop... it will change the way you see the world!',
-      productPrice: (Math.random() * 200).toFixed(2) // this will be just plain number, I do this just to automate the process
+      productPrice: (Math.random() * 20000).toFixed(0) // this will be just plain number of cents, I do this just to automate the process
     });
-    // productsObject['item-' + i].updateSubtotal();
   }
 
   // console.log(JSON.stringify(productsObject, null, 2));
@@ -207,8 +206,6 @@ function initShoppingCart() {
           return;
         }
 
-        // itemData.updateQuantity(1);
-        // itemData.updateSubtotal();
         updateCart(itemID, 1);
         itemRow = document.createElement('tr');
         itemRow.id = itemTableID;
@@ -231,8 +228,6 @@ function initShoppingCart() {
 
         selectedProductsList.appendChild(listItem);
 
-        // updateCart(itemData.productID); // MAYBE NOT NEEDED
-
         // if this is the first item added to the cart, show the cart if it is hidden
         if ( shoppingCartProducts.querySelectorAll('li').length === 0 ) {
           shoppingCartProducts.parentElement.classList.remove('hide');
@@ -249,11 +244,14 @@ function initShoppingCart() {
   }
 
   function formatPrice(price) {
-    // accounting for decimal values is not needed now because the prices
-    // are now calculated to be whole numbers, but it doesn't hurt to have this anyway.
-    var price = price.toString().split('.'),
-    modifiedPriceDigits = price[0].split(''),
-    displayPrice = '';
+    // since price is given in cents, we divide it with 100 to get the dollar amount
+    // then keep only two decimal places, then turn into string and split on the dot
+    var price = (price / 100).toFixed(2).toString().split('.'),
+        // digits of the price in front of the decimal dot
+        modifiedPriceDigits = price[0].split(''),
+        displayPrice = '';
+
+    // create a new string with the digits of the price and comas inserted on thousands positions
     for ( j = modifiedPriceDigits.length - 1; j >= 0 ; j-- ) {
       if ( displayPrice.length === 3 || displayPrice.length === 7 ) {
         displayPrice = modifiedPriceDigits[j] + ',' + displayPrice;
@@ -262,11 +260,8 @@ function initShoppingCart() {
       }
     }
 
-    if ( price[1] ) {
-      // keep only two decimal places, this is a bad way of doing it, but it will do for now
-      price[1] = price[1].charAt(0) + price[1].charAt(1);
-      displayPrice = displayPrice + '.' + price[1];
-    }
+    // concatenate the price part in front and after the decimal dot
+    displayPrice = displayPrice + '.' + price[1];
 
     return displayPrice;
   }
