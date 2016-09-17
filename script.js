@@ -76,28 +76,21 @@ function initShoppingCart() {
   // objects that will store the data for every product in product list and the product cart
   var productsObject = {};
   var shoppingCartObject = {
-    itemList: [],
+    itemList: {},
     itemNumber: 0,
     total: 0,
-    pushItem: function(item) {
-      if ( this.itemList.indexOf(item) === -1 ) {
-        this.itemList.push(item);
-      }
-    },
     removeItem: function(item) {
-      if ( this.itemList.indexOf(item) !== -1 ) {
-        var itemIndex = this.itemList.indexOf(item);
-        this.itemList.splice(itemIndex, 1);
+      if ( this.itemList[item] ) {
+        delete this.itemList[item];
       }
     },
     setTotals: function() {
-      var i, len = this.itemList.length,
-          total = 0,
+      var total = 0,
           items = 0;
 
-      for ( i = 0; i < len; i++ ) {
-        total = total + productsObject[this.itemList[i]].productSubtotal;
-        items = items + (productsObject[this.itemList[i]].productQuantity * 1);
+      for ( item in this.itemList ) {
+        total = total + this.itemList[item].productSubtotal;
+        items = items + (this.itemList[item].productQuantity * 1);
       }
 
       this.itemNumber = items;
@@ -112,20 +105,27 @@ function initShoppingCart() {
     this.productImageUrl    = productDataObject.productImageUrl;
     this.productDescription = productDataObject.productDescription;
     this.productPrice       = productDataObject.productPrice;
-    this.productQuantity    = productDataObject.productQuantity || 0;
-    this.productSubtotal    = productDataObject.productSubtotal || 0;
+    this.productQuantity    = 1;
+  }
+
+  // the function that constructs product object in the shopping cart 'itemList' array
+  function ShoppingCartProductItem(productDataObject) {
+    this.productID          = productDataObject.productID;
+    this.productPrice       = productDataObject.productPrice;
+    this.productQuantity    = productDataObject.productQuantity;
+    this.productSubtotal    = 0;
   }
 
   // add the method for manipulating the price, quantity and subtotal of the product
   // it is needed for applying the promo codes
-  ProductConstructor.prototype.updatePrice = function(promoCode) {
+  ShoppingCartProductItem.prototype.updatePrice = function(modifier) {
     var initialPrice = this.productPrice;
-    this.productPrice = Math.round((initialPrice * promoCode));
+    this.productPrice = Math.round((initialPrice * modifier));
   }
-  ProductConstructor.prototype.updateQuantity = function(qty) {
+  ShoppingCartProductItem.prototype.updateQuantity = function(qty) {
     this.productQuantity = qty;
   }
-  ProductConstructor.prototype.updateSubtotal = function() {
+  ShoppingCartProductItem.prototype.updateSubtotal = function() {
     this.productSubtotal = this.productPrice * this.productQuantity;
   }
 
@@ -212,9 +212,9 @@ function initShoppingCart() {
         itemRow.classList.add(itemID);
         itemRow.innerHTML = productTableTemplate.join('')
                                                 .replace('{{productName}}', itemData.productName)
-                                                .replace('{{productPrice}}', formatPrice(itemData.productPrice))
-                                                .replace('{{productQuantity}}', itemData.productQuantity)
-                                                .replace('{{productSubtotal}}', formatPrice(itemData.productSubtotal));
+                                                .replace('{{productPrice}}', formatPrice(shoppingCartObject.itemList[itemID].productPrice))
+                                                .replace('{{productQuantity}}', shoppingCartObject.itemList[itemID].productQuantity)
+                                                .replace('{{productSubtotal}}', formatPrice(shoppingCartObject.itemList[itemID].productSubtotal));
 
         selectedProductsTable.appendChild(itemRow);
 
@@ -223,8 +223,8 @@ function initShoppingCart() {
         listItem.classList.add(itemID);
         listItem.innerHTML = productListItemTemplate.join('')
                                                     .replace('{{productName}}', itemData.productName)
-                                                    .replace('{{productPrice}}', formatPrice(itemData.productPrice))
-                                                    .replace('{{productQuantity}}', itemData.productQuantity);
+                                                    .replace('{{productPrice}}', formatPrice(shoppingCartObject.itemList[itemID].productPrice))
+                                                    .replace('{{productQuantity}}', shoppingCartObject.itemList[itemID].productQuantity);
 
         selectedProductsList.appendChild(listItem);
 
@@ -243,10 +243,54 @@ function initShoppingCart() {
 
   }
 
+  function updateCart(itemID, quantity) {
+    // updates the total and subtotal rows
+    // updates cart icon on top of the page
+    var itemElements = document.querySelectorAll('.' + itemID),
+        itemPrice,
+        itemQuantity,
+        itemSubtotal,
+        cartSummaryItems = document.querySelector('.cart-item-no'),
+        cartSummaryTotal = document.querySelectorAll('.cart-total'),
+        i, len = itemElements.length;
+
+    if ( !shoppingCartObject.itemList[itemID] ) {
+      shoppingCartObject.itemList[itemID] = new ShoppingCartProductItem(productsObject[itemID]);
+    } else {
+      shoppingCartObject.itemList[itemID].updateQuantity(quantity);
+    }
+
+    shoppingCartObject.itemList[itemID].updateSubtotal();
+    shoppingCartObject.setTotals();
+
+    for ( i = 0; i < len; i++ ) {
+      // itemPrice = itemElements[i].querySelector('.price');
+      itemQuantity = itemElements[i].querySelector('.quantity');
+      itemSubtotal = itemElements[i].querySelector('.subtotal');
+
+      // if ( itemPrice ) itemPrice.textContent = shoppingCartObject.itemList[itemID].productPrice;
+      if ( itemQuantity ) itemQuantity.textContent = shoppingCartObject.itemList[itemID].productQuantity;
+      if ( itemSubtotal ) itemSubtotal.textContent = formatPrice(shoppingCartObject.itemList[itemID].productSubtotal);
+    }
+
+    cartSummaryItems.textContent = shoppingCartObject.itemNumber;
+    len = cartSummaryTotal.length;
+    for ( i = 0; i < len; i++ ) {
+      cartSummaryTotal[i].textContent = formatPrice(shoppingCartObject.total);
+    }
+
+    if ( quantity === 0 ) {
+      shoppingCartObject.removeItem(itemID);
+    }
+
+    // console.log(JSON.stringify(shoppingCartObject, null, 2));
+
+  }
+
   function formatPrice(price) {
     // since price is given in cents, we divide it with 100 to get the dollar amount
     // then keep only two decimal places, then turn into string and split on the dot
-    var price = (price / 100).toFixed(2).toString().split('.'),
+    var price = ((price * 1) / 100).toFixed(2).toString().split('.'),
         // digits of the price in front of the decimal dot
         modifiedPriceDigits = price[0].split(''),
         displayPrice = '';
@@ -264,42 +308,6 @@ function initShoppingCart() {
     displayPrice = displayPrice + '.' + price[1];
 
     return displayPrice;
-  }
-
-  function updateCart(itemID, value) {
-    // updates the total and subtotal rows
-    // updates cart icon on top of the page
-    var itemElements = document.querySelectorAll('.' + itemID),
-        itemPrice,
-        itemQuantity,
-        itemSubtotal,
-        cartSummaryItems = document.querySelector('.cart-item-no'),
-        cartSummaryTotal = document.querySelectorAll('.cart-total'),
-        i, len = itemElements.length;
-
-    productsObject[itemID].updateQuantity(value);
-    productsObject[itemID].updateSubtotal();
-    shoppingCartObject.pushItem(itemID);
-    shoppingCartObject.setTotals();
-
-    // console.log(JSON.stringify(shoppingCartObject, null, 2));
-
-    for ( i = 0; i < len; i++ ) {
-      // itemPrice = itemElements[i].querySelector('.price');
-      itemQuantity = itemElements[i].querySelector('.quantity');
-      itemSubtotal = itemElements[i].querySelector('.subtotal');
-
-      // if ( itemPrice ) itemPrice.textContent = productsObject[itemID].productPrice;
-      if ( itemQuantity ) itemQuantity.textContent = productsObject[itemID].productQuantity;
-      if ( itemSubtotal ) itemSubtotal.textContent = formatPrice(productsObject[itemID].productSubtotal);
-    }
-
-    cartSummaryItems.textContent = shoppingCartObject.itemNumber;
-    len = cartSummaryTotal.length;
-    for ( i = 0; i < len; i++ ) {
-      cartSummaryTotal[i].textContent = formatPrice(shoppingCartObject.total);
-    }
-
   }
 
   // add items to the main product list through a loop
@@ -357,7 +365,7 @@ function initShoppingCart() {
     // this removes items from shopping cart thumbnail display
     removeButton.removeEventListener('click', removeItemFromCart);
     shoppingCartProducts.removeChild(item);
-    shoppingCartObject.removeItem(itemID);
+    // this remove item from shopping cart object and updates the view
     updateCart(itemID, 0);
 
     // this removes items from table and list display in shopping cart
