@@ -40,12 +40,11 @@
           <div class="promo">
             <label for="promo-code">You have a promo code? Enter it here:</label><br>
             <input type="text" name="promo-code" id="promo-code" placeholder="code">
-            <div class="button button-promo">Submit code</div>
+            <div id="promo-submit" class="button button-promo">Submit code</div>
           </div>
-          <ul class="promo-code-list">
-            <li><span class="code">Code 1</span>: <span class="code-description">10% off</span></li>
-            <li><span class="code">Code 2</span>: <span class="code-description">5% off total</span></li>
-            <li><span class="code">Code 3</span>: <span class="code-description">15% off special</span></li>
+          <p class="promo-display">What promo codes are available?</p>
+          <ul class="promo-code-list hide-promo-codes">
+            <!-- dynamically added content -->
           </ul>
 
           <hr>

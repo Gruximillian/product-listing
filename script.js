@@ -22,16 +22,19 @@ function scrollToElement(pixelsAbove, element) {
 }
 
 function initShoppingCart() {
-  var shoppingCart          = document.querySelector('.shopping-cart'),
-      cartMainToggle        = document.querySelector('.shopping-cart-toggle'),
-      cartHideToggle        = document.querySelector('.hide-cart-toggle'),
-      productList           = document.querySelector('.product-list .products'),
-      shoppingCartProducts  = document.querySelector('.shopping-cart .products'),
-      selectedProductsTable = document.querySelector('#selected-products-table'),
-      selectedProductsList  = document.querySelector('#selected-products-list');
+  var shoppingCart           = document.querySelector('.shopping-cart'),
+      cartMainToggle         = document.querySelector('.shopping-cart-toggle'),
+      cartHideToggle         = document.querySelector('.hide-cart-toggle'),
+      productList            = document.querySelector('.product-list .products'),
+      shoppingCartProducts   = document.querySelector('.shopping-cart .products'),
+      selectedProductsTable  = document.querySelector('#selected-products-table'),
+      selectedProductsList   = document.querySelector('#selected-products-list'),
+      promoCodeSubmit        = document.querySelector('#promo-submit'),
+      promoCodeDisplayToggle = document.querySelector('.promo-display');
 
   // template for products shown in the main product list
-  var productTemplateArrayList = ['\t<h3 class="item-name">{{productName}}</h3>\n',
+  var productTemplateArrayList = ['\t<span class="item-category">Category: <span>{{productCategory}}</span></span>\n',
+                                  '\t<h3 class="item-name">{{productName}}</h3>\n',
                                   '\t<div class="product-image">\n',
                                   '\t\t<img src="{{productImageUrl}}">\n',
                                   '\t</div>\n',
@@ -45,7 +48,8 @@ function initShoppingCart() {
                                   '\t</span>'];
 
   // template for products shown in the shopping cart
-  var productTemplateArrayCart = ['\t<h3 class="item-name">{{productName}}</h3>\n',
+  var productTemplateArrayCart = ['\t<span class="item-category">Category: <span>{{productCategory}}</span></span>\n',
+                                  '\t<h3 class="item-name">{{productName}}</h3>\n',
                                   '\t<div class="product-image">\n',
                                   '\t\t<img src="{{productImageUrl}}">\n',
                                   '\t</div>\n',
@@ -73,6 +77,8 @@ function initShoppingCart() {
                                  '$<span class="price">{{productPrice}}</span>, ',
                                  'qty: <span class="quantity">{{productQuantity}}</span>'];
 
+  var promoCodeItemTemplate = '<span class="code">{{promoCode}}</span>: <span class="code-description">{{promoCodeDescription}}</span>';
+
   // objects that will store the data for every product in product list and the product cart
   var productsObject = {};
   var shoppingCartObject = {
@@ -84,7 +90,7 @@ function initShoppingCart() {
         delete this.itemList[item];
       }
     },
-    setTotals: function() {
+    setTotals: function(promoCode) {
       var total = 0,
           items = 0;
 
@@ -94,13 +100,102 @@ function initShoppingCart() {
       }
 
       this.itemNumber = items;
-      this.total = total;
+      // if there is no promoCode applied, then update the total
+      // if there is a promoCode applied and the new total is smaller than the previous
+      // then update the total, else leave the previous total
+      if ( !promoCode || ( promoCode && this.total > total ) ) {
+        this.total = total;
+      }
+    },
+    applyPromoCode: function(promoCode) {
+      var categories = promoCodes[promoCode].appliesTo.categories,
+          items      = promoCodes[promoCode].appliesTo.items;
+
+      // apply the promo code to all products
+      if ( promoCodes[promoCode].appliesTo.allProducts ) {
+        for ( var item in this.itemList ) {
+          this.itemList[item].promoCodesApplied.push(promoCode);
+        }
+      }
+      // apply promo codes that affect a given category or a specific product
+      for ( var item in this.itemList ) {
+        if ( categories.length ) {
+          if ( categories.indexOf(this.itemList[item].productCategory) !== -1 ) {
+            this.itemList[item].promoCodesApplied.push(promoCode);
+          }
+        }
+        if ( items.length ) {
+          if ( items.indexOf(item) !== -1 ) {
+            this.itemList[item].promoCodesApplied.push(promoCode);
+          }
+        }
+      }
+
     }
+
   };
+
+  // object that stores the promo codes and their properties
+  var promoCodes = {
+    PARTY4ALL: {
+      code: 'PARTY4ALL',
+      value: 15,
+      description: '15% off for "Party Drinks"',
+      appliesTo: {
+        // this object defines the categories and items that this code applies to, and if it applies to all products
+        categories: ['Party Drinks', 'Killer Drinks'],
+        items: [],
+        allProducts: false
+      },
+      // this property is used to check if the code is applied by the user
+      applied: false
+    },
+    BUYMECHEAP: {
+      code: 'BUYMECHEAP',
+      value: 10,
+      description: '10% off for a specific product',
+      appliesTo: {
+        categories: [],
+        items: ['item-9999', 'item-6'],
+        allProducts: false
+      },
+      applied: false
+    },
+    PRICEDOWN: {
+      code: 'PRICEDOWN',
+      value: 5,
+      description: '5% off on total value',
+      appliesTo: {
+        categories: [],
+        items: [],
+        allProducts: true
+      },
+      applied: false
+    }
+  }
+
+  // this function creates an list item to display promo code details
+  function listPromoCode(promoCodesObject, promoCode, itemTemplate) {
+    var promoCodeList = document.querySelector('.promo-code-list'),
+        promoCodeItem,
+        promoCodeItemContent;
+
+      promoCodeItem = document.createElement('li');
+      itemTemplate = itemTemplate.replace('{{promoCode}}', promoCodesObject[promoCode].code)
+                                 .replace('{{promoCodeDescription}}', promoCodesObject[promoCode].description);
+      promoCodeItem.innerHTML = itemTemplate;
+      promoCodeList.appendChild(promoCodeItem);
+
+  }
+
+  for ( var code in promoCodes ) {
+    listPromoCode(promoCodes, code, promoCodeItemTemplate);
+  }
 
   // the function that constructs the product data object
   function ProductConstructor(productDataObject) {
     this.productID          = productDataObject.productID;
+    this.productCategory    = productDataObject.productCategory;
     this.productName        = productDataObject.productName;
     this.productImageUrl    = productDataObject.productImageUrl;
     this.productDescription = productDataObject.productDescription;
@@ -111,16 +206,19 @@ function initShoppingCart() {
   // the function that constructs product object in the shopping cart 'itemList' array
   function ShoppingCartProductItem(productDataObject) {
     this.productID          = productDataObject.productID;
+    this.productCategory    = productDataObject.productCategory;
     this.productPrice       = productDataObject.productPrice;
     this.productQuantity    = productDataObject.productQuantity;
     this.productSubtotal    = 0;
+    this.promoCodesApplied  = [];
   }
 
   // add the method for manipulating the price, quantity and subtotal of the product
   // it is needed for applying the promo codes
   ShoppingCartProductItem.prototype.updatePrice = function(modifier) {
     var initialPrice = this.productPrice;
-    this.productPrice = Math.round((initialPrice * modifier));
+    // modifier is the percentage number, so we must divide by 100 to get real value
+    this.productPrice = Math.round((initialPrice * modifier / 100));
   }
   ShoppingCartProductItem.prototype.updateQuantity = function(qty) {
     this.productQuantity = qty;
@@ -139,7 +237,28 @@ function initShoppingCart() {
       productDescription: 'Taste the best schnapps in the world. Once you try it, you won\'t stop... it will change the way you see the world!',
       productPrice: (Math.random() * 20000).toFixed(0) // this will be just plain number of cents, I do this just to automate the process
     });
+
+    // add some product categories
+    if ( i < 2 ) {
+      productsObject['item-' + i].productCategory = 'Party Drinks';
+    } else if ( i >= 2 && i < 4 ) {
+      productsObject['item-' + i].productCategory = 'Soft Drinks';
+    } else if ( i >= 4 && i < 6 ) {
+      productsObject['item-' + i].productCategory = 'Drinks for all';
+    } else if ( i >= 6 ) {
+      productsObject['item-' + i].productCategory = 'Killer Drinks';
+    }
   }
+
+  // create an specific item
+  productsObject['item-9999'] = new ProductConstructor({
+    productID: 'item-9999',
+    productName: 'Mind Haze',
+    productImageUrl: 'placeholder.png',
+    productDescription: 'Have you ever wondered how would the world look like if you could see the invisible? Try Mind Haze and you will know!',
+    productPrice: 43200,
+    productCategory: 'Special Drinks'
+  });
 
   // console.log(JSON.stringify(productsObject, null, 2));
 
@@ -151,13 +270,14 @@ function initShoppingCart() {
         removeItemButton,
         itemQuantity,
         productTableListContainer = document.querySelector('.selected-products-table-list'),
-        newItem         = document.createElement('li'), // THIS IS MAYBE BETTER TO DO IN SOME OTHER PLACE
-        isShoppingCart  = location.classList.contains('products-shopping-cart'),
-        itemHTML        = itemTemplate.join('')
-                                      .replace('{{productName}}', itemData.productName)
-                                      .replace('{{productImageUrl}}', itemData.productImageUrl)
-                                      .replace('{{productDescription}}', itemData.productDescription)
-                                      .replace('{{productPrice}}', formatPrice(itemData.productPrice));
+        newItem                   = document.createElement('li'), // THIS IS MAYBE BETTER TO DO IN SOME OTHER PLACE
+        isShoppingCart            = location.classList.contains('products-shopping-cart'),
+        itemHTML                  = itemTemplate.join('')
+                                                .replace('{{productName}}', itemData.productName)
+                                                .replace('{{productCategory}}', itemData.productCategory)
+                                                .replace('{{productImageUrl}}', itemData.productImageUrl)
+                                                .replace('{{productDescription}}', itemData.productDescription)
+                                                .replace('{{productPrice}}', formatPrice(itemData.productPrice));
 
     // create element and append it to the 'location' node
     newItem.innerHTML = itemHTML;
@@ -294,7 +414,7 @@ function initShoppingCart() {
       shoppingCartObject.removeItem(itemID);
     }
 
-    // console.log(JSON.stringify(shoppingCartObject, null, 2));
+    console.log(JSON.stringify(shoppingCartObject, null, 2));
 
   }
 
@@ -392,7 +512,7 @@ function initShoppingCart() {
 
   }
 
-   cartMainToggle.addEventListener('click', function(e) {
+  cartMainToggle.addEventListener('click', function(e) {
 
     // toggle the display of the shopping cart
     if ( shoppingCart.classList.contains('hide') ) {
@@ -407,6 +527,19 @@ function initShoppingCart() {
   // hide the cart
   cartHideToggle.addEventListener('click', function() {
     shoppingCart.classList.add('hide');
+  });
+
+  promoCodeDisplayToggle.addEventListener('click', function() {
+    var promoCodesDisplay = document.querySelector('.promo-code-list');
+    promoCodesDisplay.classList.toggle('hide-promo-codes');
+  });
+
+  promoCodeSubmit.addEventListener('click', function() {
+    var promoCodeInput = document.querySelector('#promo-code'),
+        promoCode      = promoCodeInput.value;
+
+    shoppingCartObject.applyPromoCode(promoCode);
+    promoCodeInput.value = '';
   });
 
 }

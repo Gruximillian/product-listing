@@ -171,6 +171,14 @@ ul {
 
 }
 
+.item-category {
+  color: maroon;
+  display: inline-block;
+  font-size: 1.2rem;
+  text-align: center;
+  width: 100%;
+}
+
 .products h3 {
   margin: 10px 0;
   padding: 0 15px;
@@ -376,6 +384,12 @@ hr {
   font-weight: bold;
 }
 
+.promo-display {
+  color: blue;
+  cursor: pointer;
+  display: inline-block;
+}
+
 .promo {
   float: left;
   margin-top: 18px;
@@ -386,13 +400,17 @@ hr {
 .promo-code-list {
   font-size: 1.6rem;
   padding-left: 10px;
+  margin-top: 0;
+  overflow: hidden;
+  height: 55px;
+  transition: height 0.1s;
+}
+
+.hide-promo-codes {
+  height: 0;
 }
 
 @media (min-width: 750px) {
-
-  .promo-code-list {
-    font-size: 2rem;
-  }
 
   .cart-details .promo {
     width: 60%;
