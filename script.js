@@ -129,7 +129,7 @@ function initShoppingCart() {
     this.productSubtotal = this.productPrice * this.productQuantity;
   }
 
-  // generating 4 items
+  // generating items
   // in real application, there will be admin interface where the item details would be entered
   for ( var i = 0; i < 8; i++ ) {
     productsObject['item-' + i] = new ProductConstructor({
@@ -206,10 +206,13 @@ function initShoppingCart() {
           return;
         }
 
+        // since the item is not found in the cart, update the cart with it, and set quantity to 1
         updateCart(itemID, 1);
+        // create a row in the table that displays selected items
         itemRow = document.createElement('tr');
         itemRow.id = itemTableID;
         itemRow.classList.add(itemID);
+        // the data that fills the template is mostly gathered from the 'shoppindCartObject'
         itemRow.innerHTML = productTableTemplate.join('')
                                                 .replace('{{productName}}', itemData.productName)
                                                 .replace('{{productPrice}}', formatPrice(shoppingCartObject.itemList[itemID].productPrice))
@@ -218,9 +221,13 @@ function initShoppingCart() {
 
         selectedProductsTable.appendChild(itemRow);
 
+        // create a list item in the list that displays selected items
+        // this list and previous table are displayed in the same location,
+        // the list appears on small screens while table appears on larger screens
         listItem = document.createElement('li');
         listItem.id = itemListID;
         listItem.classList.add(itemID);
+        // the data that fills the template is mostly gathered from the 'shoppindCartObject'
         listItem.innerHTML = productListItemTemplate.join('')
                                                     .replace('{{productName}}', itemData.productName)
                                                     .replace('{{productPrice}}', formatPrice(shoppingCartObject.itemList[itemID].productPrice))
@@ -254,12 +261,14 @@ function initShoppingCart() {
         cartSummaryTotal = document.querySelectorAll('.cart-total'),
         i, len = itemElements.length;
 
+    // if the item does not exist in the 'shoppingCartObject', then create a new one, else update its quantity
     if ( !shoppingCartObject.itemList[itemID] ) {
       shoppingCartObject.itemList[itemID] = new ShoppingCartProductItem(productsObject[itemID]);
     } else {
       shoppingCartObject.itemList[itemID].updateQuantity(quantity);
     }
 
+    // in any case, update the subtotal for the item, and the total for the shopping cart
     shoppingCartObject.itemList[itemID].updateSubtotal();
     shoppingCartObject.setTotals();
 
@@ -273,12 +282,14 @@ function initShoppingCart() {
       if ( itemSubtotal ) itemSubtotal.textContent = formatPrice(shoppingCartObject.itemList[itemID].productSubtotal);
     }
 
+    // update the view with new values (the cart in the header, and the 'total' value in the shopping cart)
     cartSummaryItems.textContent = shoppingCartObject.itemNumber;
     len = cartSummaryTotal.length;
     for ( i = 0; i < len; i++ ) {
       cartSummaryTotal[i].textContent = formatPrice(shoppingCartObject.total);
     }
 
+    // pretty obvious :)
     if ( quantity === 0 ) {
       shoppingCartObject.removeItem(itemID);
     }
@@ -317,6 +328,7 @@ function initShoppingCart() {
 
   // limits the input only to numbers, and keys 'backspace', 'delete', and 'enter'
   // used in the quantity field of the item in the shopping cart
+  // maybe left and right arrow keys should be added here too
   function limitInput(e) {
     var key = e.key.toLowerCase(),
         value = this.value;
