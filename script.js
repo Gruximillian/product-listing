@@ -81,6 +81,7 @@ function initShoppingCart() {
 
   // objects that will store the data for every product in product list and the product cart
   var productsObject = {};
+
   var shoppingCartObject = {
     itemList: {},
     itemNumber: 0,
@@ -90,24 +91,50 @@ function initShoppingCart() {
         delete this.itemList[item];
       }
     },
-    setTotals: function(promoCode) {
-      var total = 0,
-          items = 0;
+    getTotal: function() {
+      // calculate the normal total value, without any promo codes applied
+      var total = 0;
 
       for ( item in this.itemList ) {
-        total = total + this.itemList[item].productSubtotal;
+        total = total + this.itemList[item].productQuantity * this.itemList[item].productPrice;
+      }
+
+      return total;
+    },
+    getTotalForPromo: function(promoCode) {
+      // calculate the total value with the 'promoCode' applied
+      var total = 0;
+
+      for ( item in this.itemList ) {
+        if ( this.itemList[item].promoCodesApplied.indexOf(promoCode) !== -1 ) {
+          total = total + Math.round(this.itemList[item].productQuantity * this.itemList[item].productPrice * ( 100 - promoCodes[promoCode].value ) / 100);
+        } else {
+          total = total + this.itemList[item].productQuantity * this.itemList[item].productPrice;
+        }
+      }
+
+      return total;
+    },
+    setTotal: function(promoCode) {
+      // set the total according to the given 'promoCode', if the 'promoCode' is not passed, then set normal total value
+      if ( promoCode ) {
+        this.total = this.getTotalForPromo(promoCode);
+      } else {
+        this.total = this.getTotal();
+      }
+    },
+    setItemCount: function() {
+      // sets the quantity of the item in the 'shoppingCartObject'
+      var items = 0;
+
+      for ( item in this.itemList ) {
         items = items + (this.itemList[item].productQuantity * 1);
       }
 
       this.itemNumber = items;
-      // if there is no promoCode applied, then update the total
-      // if there is a promoCode applied and the new total is smaller than the previous
-      // then update the total, else leave the previous total
-      if ( !promoCode || ( promoCode && this.total > total ) ) {
-        this.total = total;
-      }
     },
     applyPromoCode: function(promoCode) {
+      // promo codes can be applied to all items, to a category of items, or to the individual items
       var categories = promoCodes[promoCode].appliesTo.categories,
           items      = promoCodes[promoCode].appliesTo.items;
 
@@ -126,14 +153,27 @@ function initShoppingCart() {
         }
 
       }
-
       // remember that a promo code is already applied
       if ( !promoCodes[promoCode].applied ) promoCodes[promoCode].applied = true;
       // remember that any promo code is already applied
       if ( !promoCodes.applied ) promoCodes.applied = true;
-
-      // console.log(JSON.stringify(promoCodes, null, 2));
-
+    },
+    updatePromoPrice: function(promoCode) {
+      for ( var item in this.itemList ) {
+        if ( this.itemList[item].promoCodesApplied.indexOf(promoCode) !== -1 ) {
+          // if promo code is applied, then change promo price
+          this.itemList[item].productPricePromo = this.itemList[item].productPrice * ( 100 - promoCodes[promoCode].value ) / 100;
+        } else {
+          // if promo code is not applied, then reset the price to normal
+          this.itemList[item].productPricePromo = this.itemList[item].productPrice;
+        }
+      }
+    },
+    updateSubtotal: function() {
+      // this is only used for updating the display, not for calculations
+      for ( var item in this.itemList ) {
+        this.itemList[item].productSubtotal = this.itemList[item].productPricePromo * this.itemList[item].productQuantity;
+      }
     }
 
   };
@@ -187,6 +227,7 @@ function initShoppingCart() {
         promoCodeItemContent;
 
       promoCodeItem = document.createElement('li');
+      promoCodeItem.id = promoCode;
       itemTemplate = itemTemplate.replace('{{promoCode}}', promoCodesObject[promoCode].code)
                                  .replace('{{promoCodeDescription}}', promoCodesObject[promoCode].description);
       promoCodeItem.innerHTML = itemTemplate;
@@ -217,23 +258,16 @@ function initShoppingCart() {
     this.productID          = productDataObject.productID;
     this.productCategory    = productDataObject.productCategory;
     this.productPrice       = productDataObject.productPrice;
+    this.productPricePromo  = productDataObject.productPrice;
     this.productQuantity    = productDataObject.productQuantity;
     this.productSubtotal    = 0;
     this.promoCodesApplied  = [];
   }
 
-  // add the method for manipulating the price, quantity and subtotal of the product
-  // it is needed for applying the promo codes
-  ShoppingCartProductItem.prototype.updatePrice = function(modifier) {
-    var initialPrice = this.productPrice;
-    // modifier is the percentage number, so we must divide by 100 to get real value
-    this.productPrice = Math.round((initialPrice * modifier / 100));
-  }
+  // add the method for manipulating the quantity and subtotal of the product
+  // used when the user inputs the quantity in the shopping cart
   ShoppingCartProductItem.prototype.updateQuantity = function(qty) {
     this.productQuantity = qty;
-  }
-  ShoppingCartProductItem.prototype.updateSubtotal = function() {
-    this.productSubtotal = this.productPrice * this.productQuantity;
   }
 
   // generating items
@@ -307,6 +341,9 @@ function initShoppingCart() {
       removeItemButton = newItem.querySelector('.button-remove');
       removeItemButton.addEventListener('click', removeItemFromCart);
 
+      // update shopping cart object and the page view
+      updateCart();
+
     } else {
       // if the item is being added to the product list, set its id
       newItem.id = itemData.productID;
@@ -330,13 +367,13 @@ function initShoppingCart() {
           var quantity = +itemQuantity.value + 1;
           itemQuantity.value = quantity;
 
-          updateCart(itemID, quantity);
+          updateCartItem(itemID, quantity);
 
           return;
         }
 
         // since the item is not found in the cart, update the cart with it, and set quantity to 1
-        updateCart(itemID, 1);
+        updateCartItem(itemID, 1);
         // create a row in the table that displays selected items
         itemRow = document.createElement('tr');
         itemRow.id = itemTableID;
@@ -379,20 +416,82 @@ function initShoppingCart() {
 
   }
 
-  function updateCart(itemID, quantity) {
-    // updates the total and subtotal rows
-    // updates cart icon on top of the page
-    var itemElements = document.querySelectorAll('.' + itemID),
-        itemPrice,
+  function updateCart() {
+    var itemPrice,
         itemQuantity,
         itemSubtotal,
-        cartSummaryItems = document.querySelector('.cart-item-no'),
-        cartSummaryTotal = document.querySelectorAll('.cart-total'),
-        i, len = itemElements.length;
+        cartSummaryItems  = document.querySelector('.cart-item-no'),
+        cartSummaryTotal  = document.querySelectorAll('.cart-total'),
+        promoCodesDisplay = document.querySelectorAll('.promo-code-list li'),
+        i, len;
 
+    // shoppingCartObject.updateSubtotal(); // not sure if this is needed, so let it stay a while
+    var bestPromo,
+        tempTotal = shoppingCartObject.getTotal();
+    // if there are applied promo codes, check what code gives the least total
+    if ( promoCodes.applied ) {
+
+      for ( var code in promoCodes ) {
+        if ( code !== 'applied' && promoCodes[code].applied && tempTotal > shoppingCartObject.getTotalForPromo(code) ) {
+          tempTotal = shoppingCartObject.getTotalForPromo(code);
+          bestPromo = promoCodes[code].code;
+        }
+      }
+
+    }
+
+    // in any case, update price and subtotal for the item, and the total for the shopping cart
+    shoppingCartObject.updatePromoPrice(bestPromo);
+    shoppingCartObject.updateSubtotal();
+    shoppingCartObject.setTotal(bestPromo);
+    shoppingCartObject.setItemCount();
+
+    len = promoCodesDisplay.length;
+    // add and remove highlight on the row with the promo code that is in use
+    for ( i = 0; i < len; i++ ) {
+      if ( promoCodesDisplay[i].id === bestPromo ) {
+        promoCodesDisplay[i].classList.add('in-use');
+      } else {
+        promoCodesDisplay[i].classList.remove('in-use');
+      }
+    }
+
+    // this loop updates the page view, the table, the list and the price on the item in shopping cart
+    for ( var item in shoppingCartObject.itemList ) {
+      itemPriceTable    = document.querySelector('#product-table-' + item + ' .price');
+      itemQuantityTable = document.querySelector('#product-table-' + item + ' .quantity');
+      itemSubtotalTable = document.querySelector('#product-table-' + item + ' .subtotal');
+      itemPriceList     = document.querySelector('#list-' + item + ' .price');
+      itemQuantityList  = document.querySelector('#list-' + item + ' .quantity');
+      itemInCartPrice   = document.querySelector('#cart-' + item + ' .price');
+
+      if ( itemPriceTable ) itemPriceTable.textContent = formatPrice(shoppingCartObject.itemList[item].productPricePromo);
+      if ( itemQuantityTable ) itemQuantityTable.textContent = shoppingCartObject.itemList[item].productQuantity;
+      if ( itemSubtotalTable ) itemSubtotalTable.textContent = formatPrice(shoppingCartObject.itemList[item].productSubtotal);
+
+      if ( itemPriceList ) itemPriceList.textContent = formatPrice(shoppingCartObject.itemList[item].productPricePromo);
+      if ( itemQuantityList ) itemQuantityList.textContent = shoppingCartObject.itemList[item].productQuantity;
+
+      if ( itemInCartPrice ) itemInCartPrice.textContent = formatPrice(shoppingCartObject.itemList[item].productPricePromo);
+    }
+
+    // update the view with new values (the cart in the header, and the 'total' value in the shopping cart)
+    cartSummaryItems.textContent = shoppingCartObject.itemNumber;
+    len = cartSummaryTotal.length;
+    for ( i = 0; i < len; i++ ) {
+      cartSummaryTotal[i].textContent = formatPrice(shoppingCartObject.total);
+    }
+
+    console.log(JSON.stringify(shoppingCartObject, null, 2));
+
+  }
+
+  function updateCartItem(itemID, quantity) {
     // if the item does not exist in the 'shoppingCartObject', then create a new one, else update its quantity
     if ( !shoppingCartObject.itemList[itemID] ) {
+
       shoppingCartObject.itemList[itemID] = new ShoppingCartProductItem(productsObject[itemID]);
+
       // if there are applied promo codes, check if some apply to the new product and apply it
       if ( promoCodes.applied ) {
         for ( var code in promoCodes ) {
@@ -403,29 +502,9 @@ function initShoppingCart() {
           }
         }
       }
+
     } else {
       shoppingCartObject.itemList[itemID].updateQuantity(quantity);
-    }
-
-    // in any case, update the subtotal for the item, and the total for the shopping cart
-    shoppingCartObject.itemList[itemID].updateSubtotal();
-    shoppingCartObject.setTotals();
-
-    for ( i = 0; i < len; i++ ) {
-      // itemPrice = itemElements[i].querySelector('.price');
-      itemQuantity = itemElements[i].querySelector('.quantity');
-      itemSubtotal = itemElements[i].querySelector('.subtotal');
-
-      // if ( itemPrice ) itemPrice.textContent = shoppingCartObject.itemList[itemID].productPrice;
-      if ( itemQuantity ) itemQuantity.textContent = shoppingCartObject.itemList[itemID].productQuantity;
-      if ( itemSubtotal ) itemSubtotal.textContent = formatPrice(shoppingCartObject.itemList[itemID].productSubtotal);
-    }
-
-    // update the view with new values (the cart in the header, and the 'total' value in the shopping cart)
-    cartSummaryItems.textContent = shoppingCartObject.itemNumber;
-    len = cartSummaryTotal.length;
-    for ( i = 0; i < len; i++ ) {
-      cartSummaryTotal[i].textContent = formatPrice(shoppingCartObject.total);
     }
 
     // pretty obvious :)
@@ -433,7 +512,8 @@ function initShoppingCart() {
       shoppingCartObject.removeItem(itemID);
     }
 
-    console.log(JSON.stringify(shoppingCartObject, null, 2));
+    // update cart object and the page
+    updateCart();
 
   }
 
@@ -491,7 +571,7 @@ function initShoppingCart() {
         itemID = item.id.split('cart-')[1],
         removeButton = item.querySelector('.button-remove');
 
-    updateCart(itemID, value);
+    updateCartItem(itemID, value);
 
     // when the quantity is zero and 'enter' is pressed
     if ( key === 'enter' && value === '0' ) {
@@ -517,7 +597,7 @@ function initShoppingCart() {
     removeButton.removeEventListener('click', removeItemFromCart);
     shoppingCartProducts.removeChild(item);
     // this remove item from shopping cart object and updates the view
-    updateCart(itemID, 0);
+    updateCartItem(itemID, 0);
 
     // this removes items from table and list display in shopping cart
     for ( i = 0; i < len; i++ ) {
@@ -560,6 +640,8 @@ function initShoppingCart() {
     if ( !promoCode ) return;
     shoppingCartObject.applyPromoCode(promoCode);
     promoCodeInput.value = '';
+    // update cart object and the page
+    updateCart();
   });
 
 }
