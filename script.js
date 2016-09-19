@@ -111,25 +111,28 @@ function initShoppingCart() {
       var categories = promoCodes[promoCode].appliesTo.categories,
           items      = promoCodes[promoCode].appliesTo.items;
 
-      // apply the promo code to all products
-      if ( promoCodes[promoCode].appliesTo.allProducts ) {
-        for ( var item in this.itemList ) {
-          this.itemList[item].promoCodesApplied.push(promoCode);
-        }
-      }
-      // apply promo codes that affect a given category or a specific product
       for ( var item in this.itemList ) {
-        if ( categories.length ) {
-          if ( categories.indexOf(this.itemList[item].productCategory) !== -1 ) {
+
+        // if the promo code is not applied, then apply it
+        if ( this.itemList[item].promoCodesApplied.indexOf(promoCode) === -1 ) {
+
+          // apply the promo code the products
+          if ( promoCodes[promoCode].appliesTo.allProducts ||
+               (categories.length && categories.indexOf(this.itemList[item].productCategory) !== -1) ||
+               (items.length && items.indexOf(item) !== -1) ) {
             this.itemList[item].promoCodesApplied.push(promoCode);
           }
+
         }
-        if ( items.length ) {
-          if ( items.indexOf(item) !== -1 ) {
-            this.itemList[item].promoCodesApplied.push(promoCode);
-          }
-        }
+
       }
+
+      // remember that a promo code is already applied
+      if ( !promoCodes[promoCode].applied ) promoCodes[promoCode].applied = true;
+      // remember that any promo code is already applied
+      if ( !promoCodes.applied ) promoCodes.applied = true;
+
+      // console.log(JSON.stringify(promoCodes, null, 2));
 
     }
 
@@ -137,6 +140,8 @@ function initShoppingCart() {
 
   // object that stores the promo codes and their properties
   var promoCodes = {
+    // use this to check if any promo code is applied, to avoid looping through all codes to check
+    applied: false,
     PARTY4ALL: {
       code: 'PARTY4ALL',
       value: 15,
@@ -148,6 +153,7 @@ function initShoppingCart() {
         allProducts: false
       },
       // this property is used to check if the code is applied by the user
+      // and when the new product is added after the promo code is applied
       applied: false
     },
     BUYMECHEAP: {
@@ -189,7 +195,10 @@ function initShoppingCart() {
   }
 
   for ( var code in promoCodes ) {
-    listPromoCode(promoCodes, code, promoCodeItemTemplate);
+    // skip 'applied' property since it's not a promo code
+    if ( code !== 'applied' ) {
+      listPromoCode(promoCodes, code, promoCodeItemTemplate);
+    }
   }
 
   // the function that constructs the product data object
@@ -384,6 +393,16 @@ function initShoppingCart() {
     // if the item does not exist in the 'shoppingCartObject', then create a new one, else update its quantity
     if ( !shoppingCartObject.itemList[itemID] ) {
       shoppingCartObject.itemList[itemID] = new ShoppingCartProductItem(productsObject[itemID]);
+      // if there are applied promo codes, check if some apply to the new product and apply it
+      if ( promoCodes.applied ) {
+        for ( var code in promoCodes ) {
+          // skip 'applied' property since it's not a promo code
+          // and apply only applied codes
+          if ( code !== 'applied' && promoCodes[code].applied ) {
+            shoppingCartObject.applyPromoCode(code);
+          }
+        }
+      }
     } else {
       shoppingCartObject.itemList[itemID].updateQuantity(quantity);
     }
@@ -538,6 +557,7 @@ function initShoppingCart() {
     var promoCodeInput = document.querySelector('#promo-code'),
         promoCode      = promoCodeInput.value;
 
+    if ( !promoCode ) return;
     shoppingCartObject.applyPromoCode(promoCode);
     promoCodeInput.value = '';
   });
