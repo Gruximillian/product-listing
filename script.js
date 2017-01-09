@@ -21,6 +21,17 @@ function scrollToElement(pixelsAbove, element) {
 
 }
 
+function updateYear(placeholder) {
+  var date = new Date(),
+      year = date.getFullYear(),
+      yearElements = document.querySelectorAll(placeholder),
+      i, len = yearElements.length;
+
+  for ( i = 0; i < len; i++ ) {
+    yearElements[i].textContent = year;
+  }
+}
+
 function initShoppingCart() {
   var shoppingCart           = document.querySelector('.shopping-cart'),
       cartMainToggle         = document.querySelector('.shopping-cart-toggle'),
@@ -31,6 +42,8 @@ function initShoppingCart() {
       selectedProductsList   = document.querySelector('#selected-products-list'),
       promoCodeSubmit        = document.querySelector('#promo-submit'),
       promoCodeDisplayToggle = document.querySelector('.promo-display');
+
+  updateYear('.current-year');
 
   // template for products shown in the main product list
   var productTemplateArrayList = ['\t<span class="item-category">Category: <span>{{productCategory}}</span></span>\n',

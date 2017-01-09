@@ -402,7 +402,7 @@ hr {
   padding-left: 10px;
   margin-top: 0;
   overflow: hidden;
-  height: 55px;
+  height: 100px;
   transition: height 0.1s;
 }
 
