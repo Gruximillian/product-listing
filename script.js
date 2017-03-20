@@ -495,7 +495,7 @@ function initShoppingCart() {
       cartSummaryTotal[i].textContent = formatPrice(shoppingCartObject.total);
     }
 
-    console.log(JSON.stringify(shoppingCartObject, null, 2));
+    // console.log(JSON.stringify(shoppingCartObject, null, 2));
 
   }
 
